@@ -13,11 +13,23 @@ generator client {
 model LandingPage {
   id        String    @id @default(uuid())
   title     String
+  meta      Json
   users     User[]
   sections  Section[]
   hashTag   String?
   createdAt DateTime  @default(now())
   updatedAt DateTime  @default(now()) @updatedAt
+}
+
+model Wedding {
+  id           String         @id @default(uuid())
+  schedule     Event[]
+  travel       Travel[]
+  faqs         FAQ[]
+  photoGallery PhotoGallery[]
+  members      Member[]
+  createdAt    DateTime       @default(now())
+  updatedAt    DateTime       @default(now()) @updatedAt
 }
 
 model Section {
@@ -68,6 +80,8 @@ model FAQ {
   answer    String
   createdAt DateTime @default(now())
   updatedAt DateTime @default(now()) @updatedAt
+  Wedding   Wedding? @relation(fields: [weddingId], references: [id])
+  weddingId String?
 }
 
 model PhotoGallery {
@@ -77,6 +91,8 @@ model PhotoGallery {
 
   createdAt DateTime @default(now())
   updatedAt DateTime @default(now()) @updatedAt
+  Wedding   Wedding? @relation(fields: [weddingId], references: [id])
+  weddingId String?
 }
 
 model Member {
@@ -90,6 +106,8 @@ model Member {
   updatedAt DateTime @default(now()) @updatedAt
   fileId    String?
   Invitee   Invitee?
+  Wedding   Wedding? @relation(fields: [weddingId], references: [id])
+  weddingId String?
 }
 
 model Event {
@@ -105,6 +123,8 @@ model Event {
   locationId String   @unique
   fileId     String
   RSVP       RSVP[]
+  Wedding    Wedding? @relation(fields: [weddingId], references: [id])
+  weddingId  String?
 }
 
 model Travel {
@@ -117,6 +137,8 @@ model Travel {
   createdAt   DateTime @default(now())
   updatedAt   DateTime @default(now()) @updatedAt
   locationId  String   @unique
+  Wedding     Wedding? @relation(fields: [weddingId], references: [id])
+  weddingId   String?
 }
 
 model Location {
