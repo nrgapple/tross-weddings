@@ -10,13 +10,130 @@ generator client {
   provider = "prisma-client-js"
 }
 
-model Post {
-  id    String @id @default(uuid())
-  title String
-  text  String
-
-  // To return `Date`s intact through the API we need to add data transformers
-  // https://trpc.io/docs/data-transformers
+model Invitee {
+  id        String   @id @default(uuid())
+  firstName String?
+  lastName  String?
+  member    Member?  @relation(fields: [memberId], references: [id])
   createdAt DateTime @default(now())
   updatedAt DateTime @default(now()) @updatedAt
+  memberId  String?  @unique
+  RSVP      RSVP[]
+  Family    Family?  @relation(fields: [familyId], references: [id])
+  familyId  String?
+}
+
+model Family {
+  id        String    @id @default(uuid())
+  invitees  Invitee[]
+  createdAt DateTime  @default(now())
+  updatedAt DateTime  @default(now()) @updatedAt
+}
+
+model RSVP {
+  id          String   @id @default(uuid())
+  isAttending Boolean?
+  invitee     Invitee  @relation(fields: [inviteeId], references: [id])
+  event       Event    @relation(fields: [eventId], references: [id])
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @default(now()) @updatedAt
+  inviteeId   String
+  eventId     String
+}
+
+model FAQ {
+  id        String   @id @default(uuid())
+  question  String
+  answer    String
+  createdAt DateTime @default(now())
+  updatedAt DateTime @default(now()) @updatedAt
+}
+
+model PhotoGallery {
+  id     String @id @default(uuid())
+  name   String
+  images File[]
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @default(now()) @updatedAt
+}
+
+model Member {
+  id          String @id @default(uuid())
+  type        String
+  description String
+  link        Link[]
+  avatar      File?  @relation(fields: [fileId], references: [id])
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @default(now()) @updatedAt
+  fileId    String?
+  Invitee   Invitee?
+}
+
+model Event {
+  id      String   @id @default(uuid())
+  name    String
+  startAt DateTime
+  endAt   DateTime
+  image   File     @relation(fields: [fileId], references: [id])
+
+  location   Location @relation(fields: [locationId], references: [id])
+  createdAt  DateTime @default(now())
+  updatedAt  DateTime @default(now()) @updatedAt
+  locationId String   @unique
+  fileId     String
+  RSVP       RSVP[]
+}
+
+model Travel {
+  id          String   @id @default(uuid())
+  name        String
+  description String
+  type        String
+  location    Location @relation(fields: [locationId], references: [id])
+  phoneNumber String
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @default(now()) @updatedAt
+  locationId  String   @unique
+}
+
+model Location {
+  id        String   @id @default(uuid())
+  name      String
+  address1  String
+  address2  String?
+  city      String
+  state     String
+  zipCode   String
+  county    String?
+  createdAt DateTime @default(now())
+  updatedAt DateTime @default(now()) @updatedAt
+  Event     Event?
+  Travel    Travel?
+}
+
+model File {
+  id  String @id @default(uuid())
+  url String
+
+  createdAt      DateTime      @default(now())
+  updatedAt      DateTime      @default(now()) @updatedAt
+  Event          Event[]
+  Link           Link[]
+  Member         Member[]
+  PhotoGallery   PhotoGallery? @relation(fields: [photoGalleryId], references: [id])
+  photoGalleryId String?
+}
+
+model Link {
+  id        String   @id @default(uuid())
+  name      String
+  url       String
+  image     File?    @relation(fields: [fileId], references: [id])
+  createdAt DateTime @default(now())
+  updatedAt DateTime @default(now()) @updatedAt
+  fileId    String?
+  Member    Member?  @relation(fields: [memberId], references: [id])
+  memberId  String?
 }
