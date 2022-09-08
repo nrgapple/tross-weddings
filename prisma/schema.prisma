@@ -10,6 +10,27 @@ generator client {
   provider = "prisma-client-js"
 }
 
+model LandingPage {
+  id        String    @id @default(uuid())
+  title     String
+  users     User[]
+  sections  Section[]
+  hashTag   String?
+  createdAt DateTime  @default(now())
+  updatedAt DateTime  @default(now()) @updatedAt
+}
+
+model Section {
+  id            String       @id @default(uuid())
+  createdAt     DateTime     @default(now())
+  updatedAt     DateTime     @default(now()) @updatedAt
+  LandingPage   LandingPage? @relation(fields: [landingPageId], references: [id])
+  body          String
+  image         File?        @relation(fields: [fileId], references: [id])
+  landingPageId String?
+  fileId        String?
+}
+
 model Invitee {
   id        String   @id @default(uuid())
   firstName String?
@@ -124,6 +145,7 @@ model File {
   Member         Member[]
   PhotoGallery   PhotoGallery? @relation(fields: [photoGalleryId], references: [id])
   photoGalleryId String?
+  Section        Section[]
 }
 
 model Link {
@@ -136,4 +158,56 @@ model Link {
   fileId    String?
   Member    Member?  @relation(fields: [memberId], references: [id])
   memberId  String?
+}
+
+model Account {
+  id                String  @id @default(uuid())
+  userId            String
+  type              String
+  provider          String
+  providerAccountId String
+  refresh_token     String? @db.Text
+  access_token      String? @db.Text
+  expires_at        Int?
+  token_type        String?
+  scope             String?
+  id_token          String? @db.Text
+  session_state     String?
+  user              User    @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@unique([provider, providerAccountId])
+  @@map("accounts")
+}
+
+model Session {
+  id           String   @id @default(uuid())
+  sessionToken String   @unique
+  userId       String
+  expires      DateTime
+  user         User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@map("sessions")
+}
+
+model User {
+  id            String       @id @default(uuid())
+  name          String?
+  email         String?      @unique
+  emailVerified DateTime?
+  image         String?
+  accounts      Account[]
+  sessions      Session[]
+  LandingPage   LandingPage? @relation(fields: [landingPageId], references: [id])
+  landingPageId String?
+
+  @@map("users")
+}
+
+model VerificationToken {
+  identifier String
+  token      String   @unique
+  expires    DateTime
+
+  @@unique([identifier, token])
+  @@map("verification_tokens")
 }
