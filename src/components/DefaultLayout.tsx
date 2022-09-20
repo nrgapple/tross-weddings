@@ -1,3 +1,4 @@
+import { VStack } from '@chakra-ui/react';
 import Head from 'next/head';
 import { ReactNode } from 'react';
 import { ReactQueryDevtools } from 'react-query/devtools';
@@ -11,8 +12,9 @@ export const DefaultLayout = ({ children }: DefaultLayoutProps) => {
         <title>Prisma Starter</title>
         <link rel="icon" href="/favicon.ico" />
       </Head>
-
-      <main>{children}</main>
+      <VStack>
+        <main>{children}</main>
+      </VStack>
 
       {process.env.NODE_ENV !== 'production' && (
         <ReactQueryDevtools initialIsOpen={false} />
