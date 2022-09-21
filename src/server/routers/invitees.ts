@@ -1,4 +1,5 @@
 import { Prisma } from '@prisma/client';
+import { z } from 'zod';
 import { prisma } from '~/server/prisma';
 import { createRouter } from '../createRouter';
 
@@ -11,10 +12,37 @@ const defaultPostSelect = Prisma.validator<Prisma.InviteeSelect>()({
   member: true,
 });
 
-export const inviteeRouter = createRouter().query('all', {
-  async resolve() {
-    return prisma.invitee.findMany({
-      select: defaultPostSelect,
-    });
-  },
-});
+export const inviteeRouter = createRouter()
+  .query('all', {
+    async resolve() {
+      return prisma.invitee.findMany({
+        select: defaultPostSelect,
+      });
+    },
+  })
+  .mutation('edit', {
+    input: z.array(
+      z.object({
+        id: z.string().uuid().optional(),
+        firstName: z.string().min(1).max(32).nullable(),
+        lastName: z.string().min(1).max(32).nullable(),
+      }),
+    ),
+    async resolve({ input }) {
+      const createManyInvitees = prisma.invitee.createMany({
+        data: input.filter((i) => !i.id),
+      });
+      const updateManyInvitees = input
+        .filter((i) => !!i.id)
+        .map((x) =>
+          prisma.invitee.update({
+            data: x,
+            where: {
+              id: x.id,
+            },
+          }),
+        );
+      await prisma.$transaction([createManyInvitees, ...updateManyInvitees]);
+      return true;
+    },
+  });

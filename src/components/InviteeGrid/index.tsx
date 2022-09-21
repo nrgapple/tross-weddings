@@ -10,16 +10,18 @@ import 'react-responsive-carousel/lib/styles/carousel.min.css';
 import '@glideapps/glide-data-grid/dist/index.css';
 import { trpc } from '~/utils/trpc';
 import { useEffect, useState } from 'react';
+import { Button, VStack } from '@chakra-ui/react';
 
 export const InviteeGrid = () => {
   const inviteeQueryAll = trpc.useQuery(['invitee.all']);
+  const inviteeMutationEdit = trpc.useMutation('invitee.edit');
   const { data } = inviteeQueryAll;
-  type Invitee = NonNullable<typeof data>;
+  type Invitee = NonNullable<typeof data>[number];
   type InviteeRowItem = {
     wasEdited?: boolean;
     wasCreated?: boolean;
   } & Invitee;
-  const [invitees, setInvitees] = useState<InviteeRowItem>(() => data ?? []);
+  const [invitees, setInvitees] = useState<InviteeRowItem[]>(() => data ?? []);
 
   useEffect(() => {
     setInvitees(data ?? []);
@@ -54,7 +56,6 @@ export const InviteeGrid = () => {
     if (!invitee) return;
     const columnName = columns[item[0]]?.template.id as keyof Invitee;
     if (!columnName) return;
-    console.log('columnName', columnName, value);
     const newInvitee = {
       ...invitee,
       [columnName as string]: value.data,
@@ -70,20 +71,35 @@ export const InviteeGrid = () => {
     return <>Loading...</>;
   }
 
+  const onSave = () => {
+    const result = invitees
+      .filter((x) => x.wasEdited || x.wasCreated)
+      .map((x) => {
+        const { wasCreated, wasEdited, ...rest } = x;
+        return { ...rest, id: wasCreated ? undefined : x.id };
+      });
+    inviteeMutationEdit.mutate(result);
+  };
+
   return (
-    <DataEditor
-      getCellContent={getData}
-      columns={columns.map((x) => x.template)}
-      rows={invitees.length}
-      trailingRowOptions={{
-        sticky: true,
-        tint: true,
-        hint: 'New row...',
-      }}
-      rowSelectionMode={'auto'}
-      onRowAppended={onRowAppended}
-      onCellEdited={onCellEdited}
-    />
+    <VStack>
+      <DataEditor
+        getCellContent={getData}
+        columns={columns.map((x) => x.template)}
+        rows={invitees.length}
+        trailingRowOptions={{
+          sticky: true,
+          tint: true,
+          hint: 'New row...',
+        }}
+        rowSelectionMode={'auto'}
+        onRowAppended={onRowAppended}
+        onCellEdited={onCellEdited}
+      />
+      <Button onClick={onSave} isLoading={inviteeMutationEdit.isLoading}>
+        Save
+      </Button>
+    </VStack>
   );
 };
 
