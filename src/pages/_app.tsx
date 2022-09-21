@@ -3,6 +3,7 @@ import { httpBatchLink } from '@trpc/client/links/httpBatchLink';
 import { loggerLink } from '@trpc/client/links/loggerLink';
 import { withTRPC } from '@trpc/next';
 import { NextPage } from 'next';
+import { SessionProvider } from 'next-auth/react';
 import { AppProps } from 'next/app';
 import { AppType } from 'next/dist/shared/lib/utils';
 import { ReactElement, ReactNode } from 'react';
@@ -24,9 +25,11 @@ const MyApp = (({ Component, pageProps }: AppPropsWithLayout) => {
     Component.getLayout ?? ((page) => <DefaultLayout>{page}</DefaultLayout>);
 
   return getLayout(
-    <ChakraProvider>
-      <Component {...pageProps} />
-    </ChakraProvider>,
+    <SessionProvider>
+      <ChakraProvider>
+        <Component {...pageProps} />
+      </ChakraProvider>
+    </SessionProvider>,
   );
 }) as AppType;
 
