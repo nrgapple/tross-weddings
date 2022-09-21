@@ -42,10 +42,10 @@ export const InviteeGrid = ({ weddingName }: InviteeGridProps) => {
 
   const onSave = () => {
     const { created, updated } = getMutations()
-    inviteeMutationEdit.mutate([
-      ...created.map(x => ({ ...x, id: undefined })),
-      ...updated,
-    ])
+    inviteeMutationEdit.mutate({
+      weddingName,
+      data: [...created.map(x => ({ ...x, id: undefined })), ...updated],
+    })
   }
 
   return (

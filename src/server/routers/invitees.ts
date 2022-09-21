@@ -40,18 +40,37 @@ export const inviteeRouter = createRouter()
     },
   })
   .mutation('edit', {
-    input: z.array(
-      z.object({
-        id: z.string().uuid().optional(),
-        firstName: z.string().min(1).max(32).nullable(),
-        lastName: z.string().min(1).max(32).nullable(),
-      }),
-    ),
-    async resolve({ input }) {
-      const createManyInvitees = prisma.invitee.createMany({
-        data: input.filter(i => !i.id),
+    input: z.object({
+      weddingName: z.string(),
+      data: z.array(
+        z.object({
+          id: z.string().uuid().optional(),
+          firstName: z.string().min(1).max(32).nullable(),
+          lastName: z.string().min(1).max(32).nullable(),
+        }),
+      ),
+    }),
+    async resolve({ input: { weddingName, data } }) {
+      const wedding = await prisma.wedding.findUnique({
+        where: {
+          name: weddingName,
+        },
       })
-      const updateManyInvitees = input
+      if (!wedding) return false
+
+      const updateWedding = prisma.wedding.update({
+        where: {
+          id: wedding.id,
+        },
+        data: {
+          invitees: {
+            createMany: {
+              data: data.filter(d => !d.id),
+            },
+          },
+        },
+      })
+      const updateManyInvitees = data
         .filter(i => !!i.id)
         .map(x =>
           prisma.invitee.update({
@@ -61,7 +80,7 @@ export const inviteeRouter = createRouter()
             },
           }),
         )
-      await prisma.$transaction([createManyInvitees, ...updateManyInvitees])
+      await prisma.$transaction([...updateManyInvitees, updateWedding])
       return true
     },
   })
