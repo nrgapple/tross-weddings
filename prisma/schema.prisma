@@ -27,7 +27,7 @@ model Wedding {
   travel       Travel[]
   faqs         FAQ[]
   photoGallery PhotoGallery[]
-  members      Member[]
+  invitees     Invitee[]
   createdAt    DateTime       @default(now())
   updatedAt    DateTime       @default(now()) @updatedAt
 }
@@ -54,6 +54,8 @@ model Invitee {
   RSVP      RSVP[]
   Family    Family?  @relation(fields: [familyId], references: [id])
   familyId  String?
+  Wedding   Wedding? @relation(fields: [weddingId], references: [id])
+  weddingId String?
 }
 
 model Family {
@@ -102,12 +104,14 @@ model Member {
   link        Link[]
   avatar      File?  @relation(fields: [fileId], references: [id])
 
-  createdAt DateTime @default(now())
-  updatedAt DateTime @default(now()) @updatedAt
-  fileId    String?
-  Invitee   Invitee?
-  Wedding   Wedding? @relation(fields: [weddingId], references: [id])
-  weddingId String?
+  createdAt   DateTime  @default(now())
+  updatedAt   DateTime  @default(now()) @updatedAt
+  fileId      String?
+  Invitee     Invitee?
+  weddingId   String?
+  deletedAt   DateTime?
+  deletedBy   User?     @relation(fields: [userId], references: [id])
+  userId      String?
 }
 
 model Event {
@@ -115,13 +119,13 @@ model Event {
   name    String
   startAt DateTime
   endAt   DateTime
-  image   File     @relation(fields: [fileId], references: [id])
+  image   File?     @relation(fields: [fileId], references: [id])
 
   location   Location @relation(fields: [locationId], references: [id])
   createdAt  DateTime @default(now())
   updatedAt  DateTime @default(now()) @updatedAt
   locationId String   @unique
-  fileId     String
+  fileId     String?
   RSVP       RSVP[]
   Wedding    Wedding? @relation(fields: [weddingId], references: [id])
   weddingId  String?
@@ -183,20 +187,20 @@ model Link {
 }
 
 model Account {
-  id                String  @id @default(uuid())
-  userId            String
-  type              String
-  provider          String
-  providerAccountId String
-  refresh_token     String? @db.Text
+  id                       String  @id @default(uuid())
+  userId                   String
+  type                     String
+  provider                 String
+  providerAccountId        String
+  refresh_token            String? @db.Text
   refresh_token_expires_in Int?
-  access_token      String? @db.Text
-  expires_at        Int?
-  token_type        String?
-  scope             String?
-  id_token          String? @db.Text
-  session_state     String?
-  user              User    @relation(fields: [userId], references: [id], onDelete: Cascade)
+  access_token             String? @db.Text
+  expires_at               Int?
+  token_type               String?
+  scope                    String?
+  id_token                 String? @db.Text
+  session_state            String?
+  user                     User    @relation(fields: [userId], references: [id], onDelete: Cascade)
 
   @@unique([provider, providerAccountId])
   @@map("accounts")
@@ -222,6 +226,7 @@ model User {
   sessions      Session[]
   LandingPage   LandingPage? @relation(fields: [landingPageId], references: [id])
   landingPageId String?
+  Member        Member[]
 
   @@map("users")
 }
