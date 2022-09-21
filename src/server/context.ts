@@ -48,6 +48,11 @@ export async function createContextInner({
   res,
 }: trpcNext.CreateNextContextOptions) {
   const session = await unstable_getServerSession(req, res, options);
+  return {
+    req,
+    res,
+    session,
+  };
 }
 
 export type Context = trpc.inferAsyncReturnType<typeof createContextInner>;
