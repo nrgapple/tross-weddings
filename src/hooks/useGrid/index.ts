@@ -47,6 +47,15 @@ export const useGrid = <T>({ data, columns, emptyRow }: UseGridProps<T>) => {
     [columns, rows],
   )
 
+  const reorderRows = useCallback((from: number, to: number) => {
+    setRows(cv => {
+      const d = [...cv]
+      const removed = d.splice(from, 1)
+      d.splice(to, 0, ...removed)
+      return d
+    })
+  }, [])
+
   const onRowAppended = useCallback(() => {
     setRows([
       ...rows,
@@ -97,6 +106,7 @@ export const useGrid = <T>({ data, columns, emptyRow }: UseGridProps<T>) => {
     onRowAppended,
     onCellEdited,
     getMutations,
+    reorderRows,
     rows: rows.filter(x => !x.wasDeleted),
   } as const
 }
