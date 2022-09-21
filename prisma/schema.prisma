@@ -23,6 +23,7 @@ model LandingPage {
 
 model Wedding {
   id           String         @id @default(uuid())
+  name         String         @unique
   schedule     Event[]
   travel       Travel[]
   faqs         FAQ[]
@@ -104,14 +105,14 @@ model Member {
   link        Link[]
   avatar      File?  @relation(fields: [fileId], references: [id])
 
-  createdAt   DateTime  @default(now())
-  updatedAt   DateTime  @default(now()) @updatedAt
-  fileId      String?
-  Invitee     Invitee?
-  weddingId   String?
-  deletedAt   DateTime?
-  deletedBy   User?     @relation(fields: [userId], references: [id])
-  userId      String?
+  createdAt DateTime  @default(now())
+  updatedAt DateTime  @default(now()) @updatedAt
+  fileId    String?
+  Invitee   Invitee?
+  weddingId String?
+  deletedAt DateTime?
+  deletedBy User?     @relation(fields: [userId], references: [id])
+  userId    String?
 }
 
 model Event {
@@ -119,7 +120,7 @@ model Event {
   name    String
   startAt DateTime
   endAt   DateTime
-  image   File?     @relation(fields: [fileId], references: [id])
+  image   File?    @relation(fields: [fileId], references: [id])
 
   location   Location @relation(fields: [locationId], references: [id])
   createdAt  DateTime @default(now())

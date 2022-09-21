@@ -1,4 +1,5 @@
 import dynamic from 'next/dynamic'
+import { useRouter } from 'next/router'
 
 const Grid = dynamic(
   () => {
@@ -8,7 +9,8 @@ const Grid = dynamic(
 )
 
 const InviteesPage = () => {
-  return <Grid />
+  const weddingName = useRouter().query.name as string
+  return <Grid weddingName={weddingName} />
 }
 
 export default InviteesPage

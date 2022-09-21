@@ -2,6 +2,7 @@ import {
   EditableGridCell,
   GridCell,
   GridColumn,
+  GridSelection,
   Item,
 } from '@glideapps/glide-data-grid'
 import { omit } from 'radash'

@@ -20,6 +20,25 @@ export const inviteeRouter = createRouter()
       })
     },
   })
+  .query('forWedding', {
+    input: z.object({
+      name: z.string(),
+    }),
+    async resolve({ input }) {
+      const wedding = await prisma.wedding.findUnique({
+        where: {
+          name: input.name,
+        },
+      })
+      if (!wedding) return []
+      return prisma.invitee.findMany({
+        where: {
+          weddingId: wedding.id,
+        },
+        select: defaultPostSelect,
+      })
+    },
+  })
   .mutation('edit', {
     input: z.array(
       z.object({
