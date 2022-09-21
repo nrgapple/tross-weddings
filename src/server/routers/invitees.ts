@@ -47,10 +47,11 @@ export const inviteeRouter = createRouter()
           id: z.string().uuid().optional(),
           firstName: z.string().min(1).max(32).nullable(),
           lastName: z.string().min(1).max(32).nullable(),
+          isMember: z.boolean().nullable().optional(),
         }),
       ),
     }),
-    async resolve({ input: { weddingName, data } }) {
+    async resolve({ input: { weddingName, data }, ctx: { session } }) {
       const wedding = await prisma.wedding.findUnique({
         where: {
           name: weddingName,
@@ -58,29 +59,57 @@ export const inviteeRouter = createRouter()
       })
       if (!wedding) return false
 
-      const updateWedding = prisma.wedding.update({
-        where: {
-          id: wedding.id,
-        },
-        data: {
-          invitees: {
-            createMany: {
-              data: data.filter(d => !d.id),
+      const createManyInvitees = data
+        .filter(i => !i.id)
+        .map(x =>
+          prisma.invitee.create({
+            data: {
+              firstName: x.firstName,
+              lastName: x.lastName,
+              member: {
+                create: {
+                  type: null,
+                  description: '',
+                  deletedAt: x.isMember ? null : new Date(),
+                  ...(x.isMember
+                    ? {
+                        deletedBy: {
+                          connect: {
+                            id: session?.user?.id ?? undefined,
+                          },
+                        },
+                      }
+                    : {}),
+                },
+              },
+              Wedding: {
+                connect: {
+                  id: wedding.id,
+                },
+              },
             },
-          },
-        },
-      })
+          }),
+        )
       const updateManyInvitees = data
         .filter(i => !!i.id)
         .map(x =>
           prisma.invitee.update({
-            data: x,
+            data: {
+              firstName: x.firstName,
+              lastName: x.lastName,
+              member: {
+                update: {
+                  deletedAt: x.isMember ? null : new Date(),
+                  userId: x.isMember ? null : session?.user?.id,
+                },
+              },
+            },
             where: {
               id: x.id,
             },
           }),
         )
-      await prisma.$transaction([...updateManyInvitees, updateWedding])
+      await prisma.$transaction([...createManyInvitees, ...updateManyInvitees])
       return true
     },
   })

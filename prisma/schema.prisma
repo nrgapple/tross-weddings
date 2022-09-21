@@ -100,7 +100,7 @@ model PhotoGallery {
 
 model Member {
   id          String @id @default(uuid())
-  type        String
+  type        String?
   description String
   link        Link[]
   avatar      File?  @relation(fields: [fileId], references: [id])
@@ -109,7 +109,6 @@ model Member {
   updatedAt DateTime  @default(now()) @updatedAt
   fileId    String?
   Invitee   Invitee?
-  weddingId String?
   deletedAt DateTime?
   deletedBy User?     @relation(fields: [userId], references: [id])
   userId    String?
