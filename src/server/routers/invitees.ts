@@ -1,7 +1,7 @@
-import { Prisma } from '@prisma/client';
-import { z } from 'zod';
-import { prisma } from '~/server/prisma';
-import { createRouter } from '../createRouter';
+import { Prisma } from '@prisma/client'
+import { z } from 'zod'
+import { prisma } from '~/server/prisma'
+import { createRouter } from '../createRouter'
 
 const defaultPostSelect = Prisma.validator<Prisma.InviteeSelect>()({
   id: true,
@@ -10,14 +10,14 @@ const defaultPostSelect = Prisma.validator<Prisma.InviteeSelect>()({
   createdAt: true,
   updatedAt: true,
   member: true,
-});
+})
 
 export const inviteeRouter = createRouter()
   .query('all', {
     async resolve() {
       return prisma.invitee.findMany({
         select: defaultPostSelect,
-      });
+      })
     },
   })
   .mutation('edit', {
@@ -30,19 +30,19 @@ export const inviteeRouter = createRouter()
     ),
     async resolve({ input }) {
       const createManyInvitees = prisma.invitee.createMany({
-        data: input.filter((i) => !i.id),
-      });
+        data: input.filter(i => !i.id),
+      })
       const updateManyInvitees = input
-        .filter((i) => !!i.id)
-        .map((x) =>
+        .filter(i => !!i.id)
+        .map(x =>
           prisma.invitee.update({
             data: x,
             where: {
               id: x.id,
             },
           }),
-        );
-      await prisma.$transaction([createManyInvitees, ...updateManyInvitees]);
-      return true;
+        )
+      await prisma.$transaction([createManyInvitees, ...updateManyInvitees])
+      return true
     },
-  });
+  })

@@ -1,28 +1,28 @@
-import { ChakraProvider } from '@chakra-ui/react';
-import { httpBatchLink } from '@trpc/client/links/httpBatchLink';
-import { loggerLink } from '@trpc/client/links/loggerLink';
-import { withTRPC } from '@trpc/next';
-import { NextPage } from 'next';
-import { SessionProvider } from 'next-auth/react';
-import { AppProps } from 'next/app';
-import { AppType } from 'next/dist/shared/lib/utils';
-import { ReactElement, ReactNode } from 'react';
-import superjson from 'superjson';
-import { DefaultLayout } from '~/components/DefaultLayout';
-import { AppRouter } from '~/server/routers/_app';
-import { SSRContext } from '~/utils/trpc';
+import { ChakraProvider } from '@chakra-ui/react'
+import { httpBatchLink } from '@trpc/client/links/httpBatchLink'
+import { loggerLink } from '@trpc/client/links/loggerLink'
+import { withTRPC } from '@trpc/next'
+import { NextPage } from 'next'
+import { SessionProvider } from 'next-auth/react'
+import { AppProps } from 'next/app'
+import { AppType } from 'next/dist/shared/lib/utils'
+import { ReactElement, ReactNode } from 'react'
+import superjson from 'superjson'
+import { DefaultLayout } from '~/components/DefaultLayout'
+import { AppRouter } from '~/server/routers/_app'
+import { SSRContext } from '~/utils/trpc'
 
 export type NextPageWithLayout = NextPage & {
-  getLayout?: (page: ReactElement) => ReactNode;
-};
+  getLayout?: (page: ReactElement) => ReactNode
+}
 
 type AppPropsWithLayout = AppProps & {
-  Component: NextPageWithLayout;
-};
+  Component: NextPageWithLayout
+}
 
 const MyApp = (({ Component, pageProps }: AppPropsWithLayout) => {
   const getLayout =
-    Component.getLayout ?? ((page) => <DefaultLayout>{page}</DefaultLayout>);
+    Component.getLayout ?? (page => <DefaultLayout>{page}</DefaultLayout>)
 
   return getLayout(
     <SessionProvider>
@@ -30,25 +30,25 @@ const MyApp = (({ Component, pageProps }: AppPropsWithLayout) => {
         <Component {...pageProps} />
       </ChakraProvider>
     </SessionProvider>,
-  );
-}) as AppType;
+  )
+}) as AppType
 
 function getBaseUrl() {
   if (typeof window !== 'undefined') {
-    return '';
+    return ''
   }
   // reference for vercel.com
   if (process.env.VERCEL_URL) {
-    return `https://${process.env.VERCEL_URL}`;
+    return `https://${process.env.VERCEL_URL}`
   }
 
   // // reference for render.com
   if (process.env.RENDER_INTERNAL_HOSTNAME) {
-    return `http://${process.env.RENDER_INTERNAL_HOSTNAME}:${process.env.PORT}`;
+    return `http://${process.env.RENDER_INTERNAL_HOSTNAME}:${process.env.PORT}`
   }
 
   // assume localhost
-  return `http://localhost:${process.env.PORT ?? 3000}`;
+  return `http://localhost:${process.env.PORT ?? 3000}`
 }
 
 export default withTRPC<AppRouter>({
@@ -65,7 +65,7 @@ export default withTRPC<AppRouter>({
       links: [
         // adds pretty logs to your console in development and logs errors in production
         loggerLink({
-          enabled: (opts) =>
+          enabled: opts =>
             process.env.NODE_ENV === 'development' ||
             (opts.direction === 'down' && opts.result instanceof Error),
         }),
@@ -81,7 +81,7 @@ export default withTRPC<AppRouter>({
        * @link https://react-query.tanstack.com/reference/QueryClient
        */
       // queryClientConfig: { defaultOptions: { queries: { staleTime: 60 } } },
-    };
+    }
   },
   /**
    * @link https://trpc.io/docs/ssr
@@ -91,23 +91,23 @@ export default withTRPC<AppRouter>({
    * Set headers or status code when doing SSR
    */
   responseMeta(opts) {
-    const ctx = opts.ctx as SSRContext;
+    const ctx = opts.ctx as SSRContext
 
     if (ctx.status) {
       // If HTTP status set, propagate that
       return {
         status: ctx.status,
-      };
+      }
     }
 
-    const error = opts.clientErrors[0];
+    const error = opts.clientErrors[0]
     if (error) {
       // Propagate http first error from API calls
       return {
         status: error.data?.httpStatus ?? 500,
-      };
+      }
     }
     // For app caching with SSR see https://trpc.io/docs/caching
-    return {};
+    return {}
   },
-})(MyApp);
+})(MyApp)

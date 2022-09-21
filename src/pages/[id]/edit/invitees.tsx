@@ -1,14 +1,14 @@
-import dynamic from 'next/dynamic';
+import dynamic from 'next/dynamic'
 
 const Grid = dynamic(
   () => {
-    return import('../../../components/InviteeGrid');
+    return import('../../../components/InviteeGrid')
   },
   { ssr: false },
-);
+)
 
 const InviteesPage = () => {
-  return <Grid />;
-};
+  return <Grid />
+}
 
-export default InviteesPage;
+export default InviteesPage

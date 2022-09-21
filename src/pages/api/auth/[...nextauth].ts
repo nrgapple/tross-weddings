@@ -1,4 +1,4 @@
-import NextAuth from 'next-auth';
-import { options } from '~/server/context';
+import NextAuth from 'next-auth'
+import { options } from '~/server/context'
 
-export default NextAuth(options);
+export default NextAuth(options)

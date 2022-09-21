@@ -1,6 +1,6 @@
-import { GridColumnIcon, GridCellKind } from '@glideapps/glide-data-grid';
-import { ColumnSetup } from '~/hooks/useGrid';
-import { InviteesAllResultItem } from '.';
+import { GridColumnIcon, GridCellKind } from '@glideapps/glide-data-grid'
+import { ColumnSetup } from '~/hooks/useGrid'
+import { InviteesAllResultItem } from '.'
 
 export const emptyRow = (count: number) =>
   ({
@@ -10,7 +10,7 @@ export const emptyRow = (count: number) =>
     member: null,
     createdAt: new Date(),
     updatedAt: new Date(),
-  } as InviteesAllResultItem);
+  } as InviteesAllResultItem)
 
 export const columns: ColumnSetup<InviteesAllResultItem>[] = [
   {
@@ -43,4 +43,4 @@ export const columns: ColumnSetup<InviteesAllResultItem>[] = [
       displayData: person?.lastName ?? '',
     }),
   },
-];
+]

@@ -1,9 +1,9 @@
 /**
  * This file contains the root router of your tRPC-backend
  */
-import { createRouter } from '../createRouter';
-import superjson from 'superjson';
-import { inviteeRouter } from './invitees';
+import { createRouter } from '../createRouter'
+import superjson from 'superjson'
+import { inviteeRouter } from './invitees'
 
 /**
  * Create your application's root router
@@ -27,9 +27,9 @@ export const appRouter = createRouter()
    */
   .query('healthz', {
     async resolve() {
-      return 'yay!';
+      return 'yay!'
     },
   })
-  .merge('invitee.', inviteeRouter);
+  .merge('invitee.', inviteeRouter)
 
-export type AppRouter = typeof appRouter;
+export type AppRouter = typeof appRouter

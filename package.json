@@ -13,10 +13,9 @@
     "dev": "next dev",
     "dx": "run-s db-up db-migrate-dev db-seed dev",
     "start": "next start",
-    "lint": "eslint src",
-    "lint-fix": "yarn lint --fix",
     "ts-node": "ts-node --compiler-options \"{\\\"module\\\":\\\"commonjs\\\"}\"",
-    "postinstall": "prisma generate"
+    "postinstall": "prisma generate",
+    "prettier": "prettier --write ./src"
   },
   "prisma": {
     "seed": "yarn ts-node prisma/seed.ts"
@@ -24,7 +23,9 @@
   "prettier": {
     "printWidth": 80,
     "trailingComma": "all",
-    "singleQuote": true
+    "singleQuote": true,
+    "semi": false,
+    "arrowParens": "avoid"
   },
   "dependencies": {
     "@chakra-ui/react": "^2.3.2",
@@ -56,14 +57,6 @@
     "@types/faker": "^5.5.9",
     "@types/node": "^18.7.11",
     "@types/react": "^18.0.9",
-    "@typescript-eslint/eslint-plugin": "^4.30.0",
-    "@typescript-eslint/parser": "^5.14.0",
-    "eslint": "^7.32.0",
-    "eslint-config-next": "^12.0.0",
-    "eslint-config-prettier": "^8.3.0",
-    "eslint-plugin-prettier": "^4.0.0",
-    "eslint-plugin-react": "^7.25.1",
-    "eslint-plugin-react-hooks": "^4.2.0",
     "faker": "^5.5.3",
     "npm-run-all": "^4.1.5",
     "prettier": "^2.5.1",

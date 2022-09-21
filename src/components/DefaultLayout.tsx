@@ -1,9 +1,9 @@
-import { VStack } from '@chakra-ui/react';
-import Head from 'next/head';
-import { ReactNode } from 'react';
-import { ReactQueryDevtools } from 'react-query/devtools';
+import { VStack } from '@chakra-ui/react'
+import Head from 'next/head'
+import { ReactNode } from 'react'
+import { ReactQueryDevtools } from 'react-query/devtools'
 
-type DefaultLayoutProps = { children: ReactNode };
+type DefaultLayoutProps = { children: ReactNode }
 
 export const DefaultLayout = ({ children }: DefaultLayoutProps) => {
   return (
@@ -26,5 +26,5 @@ export const DefaultLayout = ({ children }: DefaultLayoutProps) => {
         <ReactQueryDevtools initialIsOpen={false} />
       )}
     </>
-  );
-};
+  )
+}
