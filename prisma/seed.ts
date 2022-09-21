@@ -9,6 +9,11 @@ import * as faker from 'faker';
 const prisma = new PrismaClient();
 
 async function main() {
+  await prisma.event.deleteMany({});
+  await prisma.location.deleteMany({});
+  await prisma.invitee.deleteMany({});
+  await prisma.wedding.deleteMany({});
+
   await prisma.location.createMany({
     data: Array.from(Array(10)).map((_) => {
       return {
@@ -28,19 +33,19 @@ async function main() {
     data: {
       schedule: {
         createMany: {
-          data: Array.from(Array(10)).map((_) => {
+          data: Array.from(Array(10)).map((_, i) => {
             return {
               name: faker.commerce.productName(),
               startAt: faker.date.future(1),
               endAt: faker.date.future(2),
-              locationId: faker.helpers.randomize(locations.map((x) => x.id)),
+              locationId: locations[i]!.id,
             };
           }),
         },
       },
       invitees: {
         createMany: {
-          data: Array.from(Array(100)).map((_) => {
+          data: Array.from(Array(20)).map((_) => {
             return {
               firstName: faker.name.firstName(1),
               lastName: faker.name.lastName(1),
