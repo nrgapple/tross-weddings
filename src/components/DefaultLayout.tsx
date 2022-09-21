@@ -13,7 +13,13 @@ export const DefaultLayout = ({ children }: DefaultLayoutProps) => {
         <link rel="icon" href="/favicon.ico" />
       </Head>
       <VStack>
-        <main>{children}</main>
+        <main>
+          <div
+            id="portal"
+            style={{ position: 'fixed', left: 0, top: 0, zIndex: 9999 }}
+          />
+          {children}
+        </main>
       </VStack>
 
       {process.env.NODE_ENV !== 'production' && (

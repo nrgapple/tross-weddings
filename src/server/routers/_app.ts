@@ -4,6 +4,7 @@
 import { createRouter } from '../createRouter';
 import { postRouter } from './post';
 import superjson from 'superjson';
+import { inviteeRouter } from './invitees';
 
 /**
  * Create your application's root router
@@ -30,9 +31,6 @@ export const appRouter = createRouter()
       return 'yay!';
     },
   })
-  /**
-   * Merge `postRouter` under `post.`
-   */
-  .merge('post.', postRouter);
+  .merge('invitee.', inviteeRouter);
 
 export type AppRouter = typeof appRouter;
