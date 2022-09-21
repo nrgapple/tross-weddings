@@ -1,10 +1,11 @@
 import { GridColumnIcon, GridCellKind } from '@glideapps/glide-data-grid'
 import { ColumnSetup } from '~/hooks/useGrid'
 import { InviteesAllResultItem } from '.'
+import { v4 as uuid } from 'uuid'
 
 export const emptyRow = (count: number) =>
   ({
-    id: `${count - 1}`,
+    id: uuid(),
     firstName: '',
     lastName: '',
     member: null,

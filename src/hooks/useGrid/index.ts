@@ -30,19 +30,20 @@ export const useGrid = <T>({ data, columns, emptyRow }: UseGridProps<T>) => {
   const [rows, setRows] = useState(() => data)
 
   useEffect(() => {
+    console.log('here')
     setRows(data ?? [])
   }, [data])
 
   const getData = useCallback(
     ([col, row]: Item): GridCell => {
-      const item = data[row] as T
+      const item = rows[row] as T
       if (!columns[col]) {
         throw new Error('Invalid column')
       } else {
         return (columns[col] as ColumnSetup<T>).data(item)
       }
     },
-    [columns, data],
+    [columns, rows],
   )
 
   const onRowAppended = useCallback(() => {
@@ -81,10 +82,20 @@ export const useGrid = <T>({ data, columns, emptyRow }: UseGridProps<T>) => {
       omit(row, ['wasCreated', 'wasEdited', 'wasDeleted'])
     return {
       created: rows.filter(row => row.wasCreated).map(removeFieldsFunc),
-      updated: rows.filter(row => row.wasEdited).map(removeFieldsFunc),
-      deleted: rows.filter(row => row.wasDeleted).map(removeFieldsFunc),
+      updated: rows
+        .filter(row => row.wasEdited && !row.wasCreated && !row.wasDeleted)
+        .map(removeFieldsFunc),
+      deleted: rows
+        .filter(row => row.wasDeleted && !row.wasCreated)
+        .map(removeFieldsFunc),
     }
   }, [rows])
 
-  return { getData, onRowAppended, onCellEdited, getMutations, rows } as const
+  return {
+    getData,
+    onRowAppended,
+    onCellEdited,
+    getMutations,
+    rows: rows.filter(x => !x.wasDeleted),
+  } as const
 }
