@@ -1,84 +1,33 @@
-import DataEditor, {
-  GridColumn,
-  GridColumnIcon,
-  Item,
-  GridCell,
-  GridCellKind,
-  EditableGridCell,
-} from '@glideapps/glide-data-grid';
+import DataEditor from '@glideapps/glide-data-grid';
 import 'react-responsive-carousel/lib/styles/carousel.min.css';
 import '@glideapps/glide-data-grid/dist/index.css';
-import { trpc } from '~/utils/trpc';
-import { useEffect, useState } from 'react';
+import { inferQueryOutput, trpc } from '~/utils/trpc';
 import { Button, VStack } from '@chakra-ui/react';
+import { MutateRow, useGrid } from '~/hooks/useGrid';
+import { columns, emptyRow } from './utils';
+
+export type InviteesAllResultItem = inferQueryOutput<'invitee.all'>[number];
 
 export const InviteeGrid = () => {
   const inviteeQueryAll = trpc.useQuery(['invitee.all']);
   const inviteeMutationEdit = trpc.useMutation('invitee.edit');
   const { data } = inviteeQueryAll;
-  type Invitee = NonNullable<typeof data>[number];
-  type InviteeRowItem = {
-    wasEdited?: boolean;
-    wasCreated?: boolean;
-  } & Invitee;
-  const [invitees, setInvitees] = useState<InviteeRowItem[]>(() => data ?? []);
-
-  useEffect(() => {
-    setInvitees(data ?? []);
-  }, [data]);
-
-  function getData([col, row]: Item): GridCell {
-    const person = invitees[row];
-    if (!columns[col]) {
-      throw new Error('Invalid column');
-    } else {
-      return columns[col]!.data(person);
-    }
-  }
-
-  const onRowAppended = () => {
-    setInvitees([
-      ...invitees,
-      {
-        id: `${invitees.length - 1}`,
-        firstName: '',
-        lastName: '',
-        member: null,
-        createdAt: new Date(),
-        updatedAt: new Date(),
-        wasCreated: true,
-      },
-    ]);
-  };
-
-  const onCellEdited = (item: Item, value: EditableGridCell) => {
-    const invitee = invitees[item[1]];
-    if (!invitee) return;
-    const columnName = columns[item[0]]?.template.id as keyof Invitee;
-    if (!columnName) return;
-    const newInvitee = {
-      ...invitee,
-      [columnName as string]: value.data,
-      wasEdited: true,
-    };
-    const index = invitees.indexOf(invitee);
-    const newInvitees = invitees;
-    newInvitees[index] = newInvitee;
-    setInvitees(newInvitees);
-  };
+  const { getData, onRowAppended, onCellEdited, getMutations, rows } = useGrid({
+    data: data as MutateRow<InviteesAllResultItem>[],
+    columns,
+    emptyRow,
+  });
 
   if (inviteeQueryAll.status !== 'success') {
     return <>Loading...</>;
   }
 
   const onSave = () => {
-    const result = invitees
-      .filter((x) => x.wasEdited || x.wasCreated)
-      .map((x) => {
-        const { wasCreated, wasEdited, ...rest } = x;
-        return { ...rest, id: wasCreated ? undefined : x.id };
-      });
-    inviteeMutationEdit.mutate(result);
+    const { created, updated } = getMutations();
+    inviteeMutationEdit.mutate([
+      ...created.map((x) => ({ ...x, id: undefined })),
+      ...updated,
+    ]);
   };
 
   return (
@@ -86,7 +35,7 @@ export const InviteeGrid = () => {
       <DataEditor
         getCellContent={getData}
         columns={columns.map((x) => x.template)}
-        rows={invitees.length}
+        rows={rows.length}
         trailingRowOptions={{
           sticky: true,
           tint: true,
@@ -102,43 +51,5 @@ export const InviteeGrid = () => {
     </VStack>
   );
 };
-
-interface ColumnSetup {
-  template: GridColumn;
-  data: (person: any) => GridCell;
-}
-
-const columns: ColumnSetup[] = [
-  {
-    template: {
-      title: 'First Name',
-      id: 'firstName',
-      width: 250,
-      icon: GridColumnIcon.HeaderString,
-      overlayIcon: GridColumnIcon.RowOwnerOverlay,
-    },
-    data: (person: any) => ({
-      kind: GridCellKind.Text,
-      data: person?.firstName ?? '',
-      allowOverlay: true,
-      displayData: person?.firstName ?? '',
-    }),
-  },
-  {
-    template: {
-      title: 'Last Name',
-      id: 'lastName',
-      width: 250,
-      icon: GridColumnIcon.HeaderString,
-      overlayIcon: GridColumnIcon.RowOwnerOverlay,
-    },
-    data: (person: any) => ({
-      kind: GridCellKind.Text,
-      data: person?.lastName ?? '',
-      allowOverlay: true,
-      displayData: person?.lastName ?? '',
-    }),
-  },
-];
 
 export default InviteeGrid;
