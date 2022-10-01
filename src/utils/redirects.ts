@@ -9,6 +9,7 @@ export const unauthRedirect = async ctx => {
     return {
       props: {
         providers,
+        session,
       },
     }
 
@@ -26,9 +27,11 @@ export const unauthRedirect = async ctx => {
 export const authRedirect = async ctx => {
   const req = ctx.req
   const session = await getSession(req)
+  const providers = await getProviders()
   if (session !== null)
     return {
       props: {
+        providers,
         session,
       },
     }

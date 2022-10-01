@@ -1,5 +1,16 @@
-import { Button, Heading, HStack, ModalContent, VStack } from '@chakra-ui/react'
-import { signIn, useSession } from 'next-auth/react'
+import {
+  Avatar,
+  Button,
+  Heading,
+  HStack,
+  Menu,
+  MenuButton,
+  MenuItem,
+  MenuList,
+  ModalContent,
+  VStack,
+} from '@chakra-ui/react'
+import { signIn, signOut, useSession } from 'next-auth/react'
 import { useModal } from '~/hooks/useModal'
 
 interface HeaderProps {
@@ -37,7 +48,18 @@ export const Header = ({ providers }: HeaderProps) => {
       boxShadow="md"
     >
       <Heading size={'md'}>Tross Weddings</Heading>
-      {modalButton}
+      {session.status === 'unauthenticated' ? (
+        modalButton
+      ) : (
+        <Menu autoSelect={false}>
+          <MenuButton>
+            <Avatar size={'sm'} />
+          </MenuButton>
+          <MenuList>
+            <MenuItem onClick={() => signOut()}>Logout</MenuItem>
+          </MenuList>
+        </Menu>
+      )}
       {modalContent}
     </HStack>
   )

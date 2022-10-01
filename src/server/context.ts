@@ -19,7 +19,6 @@ export const options = {
     }),
   ],
   adapter: PrismaAdapter(prisma),
-  pages: {},
   session: {
     strategy: 'jwt',
   },
@@ -33,10 +32,6 @@ export const options = {
         token.email = user.email
       }
       return Promise.resolve(token)
-    },
-    session: async ({ session, user }) => {
-      user.id = user.uid as string
-      return Promise.resolve(session)
     },
   },
 } as NextAuthOptions
