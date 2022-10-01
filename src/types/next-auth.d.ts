@@ -12,9 +12,6 @@ declare module 'next-auth' {
       image?: string | null
       id?: string | null
       role: string
-      isReferrer: boolean
-      isReferent: boolean
-      referRole?: ReferType
     }
     expires?: string
   }

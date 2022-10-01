@@ -20,7 +20,9 @@ export const options = {
   ],
   adapter: PrismaAdapter(prisma),
   pages: {},
-  secret: process.env.AUTH_SECRET,
+  session: {
+    strategy: 'jwt',
+  },
   jwt: {},
   callbacks: {
     // This is used to get the user id so that you can do db queries

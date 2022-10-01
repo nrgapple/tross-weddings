@@ -1,16 +1,12 @@
-import { Button, Heading, VStack } from '@chakra-ui/react'
-import { getProviders, signIn, signOut, useSession } from 'next-auth/react'
+import { Heading, VStack } from '@chakra-ui/react'
+import { getProviders, useSession } from 'next-auth/react'
+import { unauthRedirect } from '~/utils/redirects'
 import { NextPageWithLayout } from './_app'
 
-const IndexPage: NextPageWithLayout = ({ providers }) => {
+const IndexPage: NextPageWithLayout = ({ providers }: any) => {
   const session = useSession()
   return (
     <VStack>
-      {session.status === 'authenticated' ? (
-        <Button onClick={() => signOut()}>Logout</Button>
-      ) : (
-        <Button onClick={() => signIn(providers[0])}>Sign In</Button>
-      )}
       <Heading>Welcome to Tross Weddings</Heading>
     </VStack>
   )
@@ -18,9 +14,4 @@ const IndexPage: NextPageWithLayout = ({ providers }) => {
 
 export default IndexPage
 
-export async function getServerSideProps(context) {
-  const providers = await getProviders()
-  return {
-    props: { providers },
-  }
-}
+export const getServerSideProps = async ctx => unauthRedirect(ctx)

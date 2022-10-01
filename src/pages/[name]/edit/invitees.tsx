@@ -4,7 +4,7 @@ import { useRouter } from 'next/router'
 
 const Grid = dynamic(
   () => {
-    return import('../../../components/InviteeGrid')
+    return import('../../../components/InviteeGrid/InviteeGrid')
   },
   { ssr: false },
 )

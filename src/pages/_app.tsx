@@ -8,7 +8,7 @@ import { AppProps } from 'next/app'
 import { AppType } from 'next/dist/shared/lib/utils'
 import { ReactElement, ReactNode } from 'react'
 import superjson from 'superjson'
-import { DefaultLayout } from '~/components/DefaultLayout'
+import { DefaultLayout } from '~/components/DefaultLayout/DefaultLayout'
 import { AppRouter } from '~/server/routers/_app'
 import { SSRContext } from '~/utils/trpc'
 
@@ -22,15 +22,16 @@ type AppPropsWithLayout = AppProps & {
 
 const MyApp = (({ Component, pageProps }: AppPropsWithLayout) => {
   const getLayout =
-    Component.getLayout ?? (page => <DefaultLayout>{page}</DefaultLayout>)
+    Component.getLayout ??
+    (page => (
+      <SessionProvider>
+        <ChakraProvider>
+          <DefaultLayout {...pageProps}>{page}</DefaultLayout>
+        </ChakraProvider>
+      </SessionProvider>
+    ))
 
-  return getLayout(
-    <SessionProvider>
-      <ChakraProvider>
-        <Component {...pageProps} />
-      </ChakraProvider>
-    </SessionProvider>,
-  )
+  return getLayout(<Component {...pageProps} />)
 }) as AppType
 
 function getBaseUrl() {

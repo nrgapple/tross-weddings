@@ -31,7 +31,6 @@ export const useGrid = <T>({ data, columns, emptyRow }: UseGridProps<T>) => {
   const [rows, setRows] = useState(() => data)
 
   useEffect(() => {
-    console.log('here')
     setRows(data ?? [])
   }, [data])
 
