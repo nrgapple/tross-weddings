@@ -9,10 +9,8 @@ export const getSession = async (req: unknown) => {
   if (!jwt) {
     return null
   }
-  console.log({ jwt })
-
   session.user = {}
-  session.user.id = jwt.id as number
+  session.user.id = jwt.uid as string
   session.user.name = jwt.name as string
   return Promise.resolve(session)
 }

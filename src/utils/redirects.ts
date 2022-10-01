@@ -5,13 +5,10 @@ export const unauthRedirect = async ctx => {
   const req = ctx.req
   const session = await getSession(req)
   const providers = await getProviders()
-  console.log({ session })
-
   if (session === null)
     return {
       props: {
         providers,
-        session,
       },
     }
 
@@ -20,8 +17,25 @@ export const unauthRedirect = async ctx => {
     return {
       redirect: {
         permanent: false,
-        destination: '/wedding',
+        destination: '/home',
       },
     }
+  }
+}
+
+export const authRedirect = async ctx => {
+  const req = ctx.req
+  const session = await getSession(req)
+  if (session !== null)
+    return {
+      props: {
+        session,
+      },
+    }
+  return {
+    redirect: {
+      permanent: false,
+      destination: '/',
+    },
   }
 }
