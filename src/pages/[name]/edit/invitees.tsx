@@ -1,4 +1,4 @@
-import { HStack, VStack, Text } from '@chakra-ui/react'
+import { VStack } from '@chakra-ui/react'
 import dynamic from 'next/dynamic'
 import { useRouter } from 'next/router'
 import { authRedirect } from '~/utils/redirects'
