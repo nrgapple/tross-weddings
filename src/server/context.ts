@@ -33,6 +33,10 @@ export const options = {
       }
       return Promise.resolve(token)
     },
+    session: async ({ session, token }) => {
+      session.user.id = token.uid
+      return Promise.resolve(session)
+    },
   },
 } as NextAuthOptions
 

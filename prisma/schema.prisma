@@ -24,6 +24,8 @@ model LandingPage {
 model Wedding {
   id           String         @id @default(uuid())
   name         String         @unique
+  user         User           @relation(fields: [userId], references: [id])
+  userId       String
   schedule     Event[]
   travel       Travel[]
   faqs         FAQ[]
@@ -99,11 +101,11 @@ model PhotoGallery {
 }
 
 model Member {
-  id          String @id @default(uuid())
+  id          String  @id @default(uuid())
   type        String?
   description String
   link        Link[]
-  avatar      File?  @relation(fields: [fileId], references: [id])
+  avatar      File?   @relation(fields: [fileId], references: [id])
 
   createdAt DateTime  @default(now())
   updatedAt DateTime  @default(now()) @updatedAt
@@ -227,6 +229,7 @@ model User {
   LandingPage   LandingPage? @relation(fields: [landingPageId], references: [id])
   landingPageId String?
   Member        Member[]
+  Wedding       Wedding[]
 
   @@map("users")
 }

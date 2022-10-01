@@ -16,13 +16,11 @@ export const DefaultLayout = ({ children, providers }: DefaultLayoutProps) => {
       </Head>
       <VStack>
         <Header providers={providers} />
-        <main>
-          <div
-            id="portal"
-            style={{ position: 'fixed', left: 0, top: 0, zIndex: 9999 }}
-          />
-          {children}
-        </main>
+        <div
+          id="portal"
+          style={{ position: 'fixed', left: 0, top: 0, zIndex: 9999 }}
+        />
+        {children}
       </VStack>
 
       {process.env.NODE_ENV !== 'production' && (

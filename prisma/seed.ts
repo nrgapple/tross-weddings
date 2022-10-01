@@ -47,6 +47,9 @@ const createWedding = async ({
   await prisma.wedding.create({
     data: {
       name: weddingName,
+      user: {
+        create: {},
+      },
       schedule: {
         createMany: {
           data: Array.from(Array(scheduleCount)).map((_, i) => {

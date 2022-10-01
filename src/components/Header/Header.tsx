@@ -7,7 +7,6 @@ import {
   MenuButton,
   MenuItem,
   MenuList,
-  ModalContent,
   VStack,
 } from '@chakra-ui/react'
 import { signIn, signOut, useSession } from 'next-auth/react'
