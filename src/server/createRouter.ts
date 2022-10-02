@@ -1,24 +1,16 @@
 import { Context } from './context'
 import * as trpc from '@trpc/server'
-import { rule, shield } from 'trpc-shield'
+import { deny, not, rule, shield } from 'trpc-shield'
 
-const isAuthenticated = rule()(async (ctx, type, path, rawInput) => {
-  console.log({ ctx })
-
-  return false
+const isAuthenticated = rule()(async ctx => {
+  return ctx.session !== null
 })
 
-const permissions = shield(
-  {
-    query: {
-      invitee: isAuthenticated,
-    },
+const permissions = shield({
+  query: {
+    // all: isAuthenticated,
   },
-  {
-    fallbackRule: isAuthenticated,
-    fallbackError: 'Internal Server Error',
-  },
-)
+})
 
 /**
  * Helper function to create a router with context

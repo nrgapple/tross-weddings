@@ -1,27 +1,30 @@
-import { Button, Heading, VStack } from '@chakra-ui/react'
-import { useSession } from 'next-auth/react'
-import { useRouter } from 'next/router'
+import { Button, Input, VStack } from '@chakra-ui/react'
+import { useState } from 'react'
 import { authRedirect } from '~/utils/redirects'
 import { trpc } from '~/utils/trpc'
 
 export default function HomePage() {
-  const session = useSession()
-  const router = useRouter()
-  const { data } = trpc.useQuery(['wedding.all'])
+  const [name, setName] = useState()
+  const { data } = trpc.useQuery(['wedding.findOneWedding'])
+  const { mutate, isLoading } = trpc.useMutation('wedding.createWedding')
 
   return (
     <VStack>
-      <Heading>Hello {session.data?.user?.name}</Heading>
-      <VStack>
-        {data &&
-          data.map(wedding => (
-            <Button
-              onClick={() => router.push(`/${wedding.name}/edit/invitees`)}
-            >
-              {wedding.name}
-            </Button>
-          ))}
-      </VStack>
+      <Input
+        value={name}
+        onChange={e => {
+          setName(e.target.value)
+        }}
+      />
+      <Button
+        isLoading={isLoading}
+        onClick={e => {
+          e.preventDefault()
+          if (name) mutate({ name })
+        }}
+      >
+        Add Wedding
+      </Button>
     </VStack>
   )
 }

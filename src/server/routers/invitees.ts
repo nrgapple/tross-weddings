@@ -25,7 +25,7 @@ export const inviteeRouter = createRouter()
       name: z.string(),
     }),
     async resolve({ input }) {
-      const wedding = await prisma.wedding.findUnique({
+      const wedding = await prisma.wedding.findFirst({
         where: {
           name: input.name,
         },

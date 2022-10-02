@@ -1,8 +1,8 @@
-import { VStack } from '@chakra-ui/react'
+import { Stack, VStack } from '@chakra-ui/react'
 import Head from 'next/head'
 import { ReactNode } from 'react'
-import { ReactQueryDevtools } from 'react-query/devtools'
-import { Header } from '../Header/Header'
+import { TabBar } from '../TabBar/TabBar'
+import { Header } from './Header/Header'
 
 type DefaultLayoutProps = { children: ReactNode; providers?: any }
 
@@ -13,18 +13,24 @@ export const DefaultLayout = ({ children, providers }: DefaultLayoutProps) => {
         <title>Tross Weddings</title>
         <link rel="icon" href="/favicon.ico" />
       </Head>
-      <VStack>
+      <VStack minH="100vh" w="100%">
         <Header providers={providers} />
         <div
           id="portal"
           style={{ position: 'fixed', left: 0, top: 0, zIndex: 9999 }}
         />
-        {children}
+        <Stack
+          w="100%"
+          alignItems="start"
+          direction={{ lg: 'row' }}
+          maxW="1800px"
+        >
+          <TabBar />
+          <VStack h="100%" w="100%">
+            {children}
+          </VStack>
+        </Stack>
       </VStack>
-
-      {process.env.NODE_ENV !== 'production' && (
-        <ReactQueryDevtools initialIsOpen={false} />
-      )}
     </>
   )
 }
