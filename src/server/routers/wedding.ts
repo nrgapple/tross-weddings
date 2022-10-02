@@ -5,13 +5,11 @@ import { prisma } from '../prisma'
 export const weddingRouter = createRouter()
   .query('findOneWedding', {
     async resolve({ ctx: { session } }) {
-      return session
-        ? prisma.wedding.findUnique({
-            where: {
-              userId: session.user.id,
-            },
-          })
-        : null
+      return prisma.wedding.findUnique({
+        where: {
+          userId: session.user.id,
+        },
+      })
     },
   })
   .mutation('createWedding', {

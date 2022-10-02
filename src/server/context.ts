@@ -6,11 +6,6 @@ import { NextAuthOptions, unstable_getServerSession } from 'next-auth'
 import GitHubProvider from 'next-auth/providers/github'
 import { prisma } from './prisma'
 
-// eslint-disable-next-line @typescript-eslint/no-empty-interface
-interface CreateContextOptions {
-  // session: Session | null
-}
-
 export const options = {
   providers: [
     GitHubProvider({

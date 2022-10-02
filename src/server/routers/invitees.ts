@@ -52,7 +52,7 @@ export const inviteeRouter = createRouter()
       ),
     }),
     async resolve({ input: { weddingName, data }, ctx: { session } }) {
-      const wedding = await prisma.wedding.findUnique({
+      const wedding = await prisma.wedding.findFirst({
         where: {
           name: weddingName,
         },
