@@ -12,12 +12,15 @@ import {
 import { useRouter } from 'next/router'
 import { HiOutlineHome, HiOutlineCalendar, HiOutlineUser } from 'react-icons/hi'
 import { trpc } from '~/utils/trpc'
+import { useSession } from 'next-auth/react'
 
 export const TabBar = () => {
+  const session = useSession()
   const { data, isLoading } = trpc.useQuery(['wedding.findOneWedding'])
   const backgroundColor = useColorModeValue('white', 'gray.800')
 
   return (
+    session &&
     !isLoading && (
       <Box
         position={{ base: 'fixed', lg: 'sticky' }}
