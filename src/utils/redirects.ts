@@ -30,6 +30,9 @@ export const unauthRedirect = async (ctx: CTXType) => {
       },
     }
   }
+  return {
+    props: {},
+  }
 }
 
 export const authRedirect = async (ctx: CTXType) => {

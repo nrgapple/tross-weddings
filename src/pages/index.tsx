@@ -1,4 +1,5 @@
 import { Heading, VStack } from '@chakra-ui/react'
+import { GetServerSideProps } from 'next'
 import { getProviders, useSession } from 'next-auth/react'
 import { unauthRedirect } from '~/utils/redirects'
 import { NextPageWithLayout } from './_app'
@@ -14,4 +15,5 @@ const IndexPage: NextPageWithLayout = ({ providers }: any) => {
 
 export default IndexPage
 
-export const getServerSideProps = async ctx => unauthRedirect(ctx)
+export const getServerSideProps: GetServerSideProps = async ctx =>
+  unauthRedirect(ctx)
