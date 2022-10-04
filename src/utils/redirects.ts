@@ -1,7 +1,15 @@
+import {
+  GetServerSideProps,
+  GetServerSidePropsContext,
+  PreviewData,
+} from 'next'
 import { getProviders } from 'next-auth/react'
+import { ParsedUrlQuery } from 'querystring'
 import { getSession } from './services'
 
-export const unauthRedirect = async ctx => {
+export type CTXType = GetServerSidePropsContext<ParsedUrlQuery, PreviewData>
+
+export const unauthRedirect = async (ctx: CTXType) => {
   const req = ctx.req
   const session = await getSession(req)
   const providers = await getProviders()
@@ -24,7 +32,7 @@ export const unauthRedirect = async ctx => {
   }
 }
 
-export const authRedirect = async ctx => {
+export const authRedirect = async (ctx: CTXType) => {
   const req = ctx.req
   const session = await getSession(req)
   const providers = await getProviders()

@@ -1,10 +1,11 @@
 import { Button, Input, VStack } from '@chakra-ui/react'
+import { GetServerSideProps } from 'next'
 import { useState } from 'react'
 import { authRedirect } from '~/utils/redirects'
 import { trpc } from '~/utils/trpc'
 
 export default function HomePage() {
-  const [name, setName] = useState()
+  const [name, setName] = useState('')
   const { data } = trpc.useQuery(['wedding.findOneWedding'])
   const { mutate, isLoading } = trpc.useMutation('wedding.createWedding')
 
@@ -29,4 +30,5 @@ export default function HomePage() {
   )
 }
 
-export const getServerSideProps = async ctx => authRedirect(ctx)
+export const getServerSideProps: GetServerSideProps = async ctx =>
+  authRedirect(ctx)
